@@ -107,15 +107,12 @@ export default {
   methods: {
     edior(item) {
       this.editoritem = this.foodmenu.indexOf(item);
-      this.newitem.id = item.id;
-      this.newitem.name = item.name;
-      this.newitem.cost = item.cost;
+      Object.assign(this.newitem, item);
       this.dialogedior = true;
     },
     ediorsumbit() {
-      this.foodmenu[this.editoritem].id = this.newitem.id;
-      this.foodmenu[this.editoritem].name = this.newitem.name;
-      this.foodmenu[this.editoritem].cost = this.newitem.cost;
+      Object.assign(this.foodmenu[this.editoritem], this.newitem);
+      this.dialogedior = false;
     },
     delect(item) {
       this.editoritem = this.foodmenu.indexOf(item);
