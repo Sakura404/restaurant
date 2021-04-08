@@ -2,7 +2,10 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import login from '../views/login.vue'
-import nameless from '../views/nameless.vue';
+import order from '../views/order.vue'
+import menu from '../views/menu.vue'
+import dashboard from '../views/dashboard.vue'
+import report from '../views/report.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -14,13 +17,21 @@ const routes = [
             requireAuth: true
         },
         children: [{
-            path: '/about',
-            name: 'about',
-            component: nameless,
+            path: '/dashboard',
+            name: 'dashboard',
+            component: dashboard,
         }, {
             path: '/menu',
-            name: 'about',
-            component: nameless,
+            name: 'menu',
+            component: menu,
+        }, {
+            path: '/order',
+            name: 'order',
+            component: order,
+        }, {
+            path: '/report',
+            name: 'report',
+            component: report,
         },]
     }, {
         path: '/login',
@@ -28,7 +39,7 @@ const routes = [
         component: login
     }, {
         path: '*',
-        redirect: 'about'
+        redirect: 'dashboard'
     }
 ]
 

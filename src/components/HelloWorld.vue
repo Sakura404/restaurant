@@ -4,7 +4,7 @@
       <v-subheader> {{ username }}</v-subheader>
       <v-divider></v-divider>
       <v-list nav>
-        <v-subheader>main</v-subheader>
+        <v-subheader>MAIN</v-subheader>
         <v-list-item
           color="primary"
           v-for="(item, index) in navlist"
@@ -14,24 +14,20 @@
           <v-list-item-icon
             ><v-icon>{{ item.ico }}</v-icon></v-list-item-icon
           >
-          <v-list-item-content>{{
-            item.itemname.toLocaleUpperCase()
-          }}</v-list-item-content>
+          <v-list-item-content>{{ item.itemname }}</v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-subheader>savereport</v-subheader>
+        <v-subheader>SAVED REPORT</v-subheader>
         <v-list-item
           color="primary"
           v-for="(item, index) in savereport"
           :to="item.tolink"
-          :key="index"
+          :key="index + 4"
         >
           <v-list-item-icon
             ><v-icon>{{ item.ico }}</v-icon></v-list-item-icon
           >
-          <v-list-item-content>{{
-            item.itemname.toLocaleUpperCase()
-          }}</v-list-item-content>
+          <v-list-item-content>{{ item.itemname }}</v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -40,7 +36,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <v-scroll-x-reverse-transition>
-        <v-text-field v-if="search" hide-details single-line> </v-text-field>
+        <v-text-field v-if="search" hide-details single-line></v-text-field>
       </v-scroll-x-reverse-transition>
       <v-icon @click="search = !search">mdi-magnify</v-icon>
     </v-app-bar>
@@ -59,13 +55,9 @@ export default {
     search: null,
     drawer: null,
     navlist: [
-      { tolink: "/", ico: "mdi-home", itemname: "dashboard" },
+      { tolink: "/dashboard", ico: "mdi-home", itemname: "dashboard" },
       { tolink: "/menu", ico: "mdi-food", itemname: "menu" },
-      {
-        tolink: "/order",
-        ico: "mdi-clipboard-list-outline",
-        itemname: "order",
-      },
+      { tolink: "/order",ico: "mdi-clipboard-list-outline",itemname: "order"},
       { tolink: "/report", ico: "mdi-chart-bar", itemname: "report" },
     ],
     savereport: [
@@ -75,10 +67,6 @@ export default {
     ],
   }),
 
-  computed: {
-    username: () => {
-      window.sessionStorage.getItem("userId");
-    },
-  },
+  computed: {},
 };
 </script>
