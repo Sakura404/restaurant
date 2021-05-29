@@ -2,7 +2,7 @@
   <v-app>
     <v-container app
       ><v-row justify="center"
-        ><v-col class="x" md="4"
+        ><v-col class="x" cols="12" sm="6"
           ><v-card outlined app
             ><v-img
               height="250"

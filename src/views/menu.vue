@@ -13,29 +13,43 @@
     </v-dialog>
     <v-dialog max-width="400px" v-model="dialogedior">
       <v-card>
-        <v-card-title>{{ editorstate }}</v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col md="4">
-              <v-text-field label="id" v-model="newitem.id"></v-text-field>
-            </v-col>
-            <v-col md="4">
-              <v-text-field label="name" v-model="newitem.name"></v-text-field>
-            </v-col>
-            <v-col md="4">
-              <v-text-field label="cost" v-model="newitem.cost"></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-spacer></v-spacer>
-            <v-col md="3">
+        <v-form ref="form">
+          <v-card-title>{{ editorstate }}</v-card-title>
+          <v-card-text>
+            <v-row>
+              <v-col md="4">
+                <v-text-field
+                  label="id"
+                  :rules="[rules.required, rules.repeatid, rules.mustnum]"
+                  v-model="newitem.id"
+                ></v-text-field>
+              </v-col>
+              <v-col md="4">
+                <v-text-field
+                  label="name"
+                  :rules="[rules.required]"
+                  v-model="newitem.name"
+                ></v-text-field>
+              </v-col>
+              <v-col md="4">
+                <v-text-field
+                  label="cost"
+                  :rules="[rules.required ,rules.mustnum]"
+                  v-model="newitem.cost"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-spacer></v-spacer>
+              <v-col md="3">
                 <v-btn @click="ediorcancel()" depressed>取消</v-btn>
-            </v-col>
-            <v-col md="3">
-              <v-btn @click="ediorsumbit()" depressed>确认</v-btn>
-            </v-col>
-          </v-row>
-        </v-card-text>
+              </v-col>
+              <v-col md="3">
+                <v-btn @click="ediorsumbit()" depressed>确认</v-btn>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-form>
       </v-card>
     </v-dialog>
     <v-data-table :headers="headers" :items="foodmenu">
@@ -67,6 +81,14 @@ export default {
         id: null,
         name: null,
         cost: null,
+      },
+      rules: {
+        required: (value) => !!value || "Required!",
+        repeatid: (value) =>
+          this.arrindexOf(this.foodmenu, "id", value) ||
+          this.editoritem != -1 ||
+          "ID repeat!",
+        mustnum: (value) => /^[0-9]*$/.test(value) || "must be numbers",
       },
       editorstate: "修改",
       editoritem: null,
@@ -103,31 +125,46 @@ export default {
           id: 2,
           name: "rice",
           cost: 10,
+        } ,{
+          id:3,
+          name: "rice",
+          cost: 10,
         },
       ],
     };
   },
   methods: {
+    arrindexOf(arraytosearch, key, valuetosearch) {
+      for (var i = 0; i < arraytosearch.length; i++) {
+        if (arraytosearch[i][key] == valuetosearch) {
+          return false;
+        }
+      }
+      return true;
+    },
     additem() {
       this.editorstate = "ADD";
       this.dialogedior = true;
       this.editoritem = -1;
-      this.newitem = Object.assign({});
     },
     edior(item) {
       this.editorstate = "CHAGNE";
       this.editoritem = this.foodmenu.indexOf(item);
-      Object.assign(this.newitem, item);
+      this.newitem=Object.assign({}, item);
       this.dialogedior = true;
     },
     ediorsumbit() {
-      if (this.editoritem != -1) {
-        Object.assign(this.foodmenu[this.editoritem], this.newitem);
-      } else {
-        this.foodmenu.push(this.newitem);
+      if (this.$refs.form.validate()) {
+        if (this.editoritem != -1) {
+          Object.assign(this.foodmenu[this.editoritem], this.newitem);
+        } else {
+          this.foodmenu.push(this.newitem);
+        }
+        this.dialogedior = false;
+        //发送更改请求
+        this.newitem=Object.assign({})
+         this.$refs.form.resetValidation()
       }
-      this.dialogedior = false;
-      //发送更改请求
     },
     delect(item) {
       this.editoritem = this.foodmenu.indexOf(item);
@@ -144,6 +181,7 @@ export default {
       this.dialogdelete = false;
       this.dialogedior = false;
       this.editoritem = null;
+      this.$refs.form.reset();
     },
   },
 };

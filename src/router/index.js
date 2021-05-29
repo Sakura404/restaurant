@@ -10,29 +10,33 @@ Vue.use(VueRouter)
 
 const routes = [
     {
-        path: '/',
+        path: '/123',
         name: 'Home',
         component: Home,
         meta: {
             requireAuth: true
         },
-        children: [{
-            path: '/dashboard',
-            name: 'dashboard',
-            component: dashboard,
-        }, {
-            path: '/menu',
-            name: 'menu',
-            component: menu,
-        }, {
-            path: '/order',
-            name: 'order',
-            component: order,
-        }, {
-            path: '/report',
-            name: 'report',
-            component: report,
-        },]
+        children: [
+            {
+                path: '',
+                redirect: 'dashboard'
+            }, {
+                path: 'dashboard',
+                name: 'dashboard',
+                component: dashboard,
+            }, {
+                path: 'menu',
+                name: 'menu',
+                component: menu,
+            }, {
+                path: 'order',
+                name: 'order',
+                component: order,
+            }, {
+                path: 'report',
+                name: 'report',
+                component: report,
+            },]
     }, {
         path: '/login',
         name: 'login',
