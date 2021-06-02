@@ -34,7 +34,7 @@
               <v-col md="4">
                 <v-text-field
                   label="cost"
-                  :rules="[rules.required ,rules.mustnum]"
+                  :rules="[rules.required, rules.mustnum]"
                   v-model="newitem.cost"
                 ></v-text-field>
               </v-col>
@@ -52,7 +52,14 @@
         </v-form>
       </v-card>
     </v-dialog>
-    <v-data-table :headers="headers" :items="foodmenu">
+    <v-data-table
+      :headers="headers"
+      :items="foodmenu"
+      :footer-props="{
+        disablePagination: true,
+        disableItemsPerPage: true,
+      }"
+    >
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Menu</v-toolbar-title>
@@ -125,8 +132,9 @@ export default {
           id: 2,
           name: "rice",
           cost: 10,
-        } ,{
-          id:3,
+        },
+        {
+          id: 3,
           name: "rice",
           cost: 10,
         },
@@ -142,6 +150,16 @@ export default {
       }
       return true;
     },
+    updated() {
+        this.$axios.get('localhost:5555/api/food')
+        .then(res => {
+            this.foodmenu=res;
+            console.log(res)
+        })
+        .catch(err => {
+            console.error(err); 
+        })
+    },
     additem() {
       this.editorstate = "ADD";
       this.dialogedior = true;
@@ -150,7 +168,7 @@ export default {
     edior(item) {
       this.editorstate = "CHAGNE";
       this.editoritem = this.foodmenu.indexOf(item);
-      this.newitem=Object.assign({}, item);
+      this.newitem = Object.assign({}, item);
       this.dialogedior = true;
     },
     ediorsumbit() {
@@ -162,8 +180,8 @@ export default {
         }
         this.dialogedior = false;
         //发送更改请求
-        this.newitem=Object.assign({})
-         this.$refs.form.resetValidation()
+        this.newitem = Object.assign({});
+        this.$refs.form.resetValidation();
       }
     },
     delect(item) {
@@ -183,6 +201,9 @@ export default {
       this.editoritem = null;
       this.$refs.form.reset();
     },
+  },
+  mounted() {
+      this.updated();
   },
 };
 </script>
