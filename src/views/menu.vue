@@ -6,7 +6,7 @@
         <v-card-text>确定要删除该菜品么</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="ediorcancel()" depressed>取消</v-btn>
+          <v-btn @click="ediorcancel('delete')" depressed>取消</v-btn>
           <v-btn @click="delectsumbit()" depressed>确认</v-btn>
         </v-card-actions>
       </v-card>
@@ -19,8 +19,8 @@
             <v-row>
               <v-col md="4">
                 <v-text-field
+                  disabled
                   label="id"
-                  :rules="[rules.required, rules.repeatid, rules.mustnum]"
                   v-model="newitem.id"
                 ></v-text-field>
               </v-col>
@@ -56,7 +56,6 @@
       :headers="headers"
       :items="foodmenu"
       :footer-props="{
-        disablePagination: true,
         disableItemsPerPage: true,
       }"
     >
@@ -66,6 +65,7 @@
           <v-divider class="mx-4" inset vertical></v-divider>
 
           <v-spacer></v-spacer>
+          <v-btn color="primary" @click="foodget()">REFREASH</v-btn>
           <v-btn color="primary" @click="additem()">ADD FOOD</v-btn>
         </v-toolbar>
       </template>
@@ -76,11 +76,12 @@
         <v-btn icon @click="delect(item)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
-      </template>
-    </v-data-table>
+      </template> </v-data-table
+    >{{ editoritem }}{{ foodmenu }}
   </v-container>
 </template>
 <script>
+import Qs from "qs";
 export default {
   data() {
     return {
@@ -122,23 +123,7 @@ export default {
           align: "center",
         },
       ],
-      foodmenu: [
-        {
-          id: 1,
-          name: "beef",
-          cost: 20,
-        },
-        {
-          id: 2,
-          name: "rice",
-          cost: 10,
-        },
-        {
-          id: 3,
-          name: "rice",
-          cost: 10,
-        },
-      ],
+      foodmenu: [],
     };
   },
   methods: {
@@ -150,15 +135,56 @@ export default {
       }
       return true;
     },
-    updated() {
-        this.$axios.get('localhost:5555/api/food')
-        .then(res => {
-            this.foodmenu=res;
-            console.log(res)
+    fooddelete() {
+      var data = { id: this.foodmenu[this.editoritem].id };
+      console.log(data);
+      this.axios
+        .post("/api/fooddelete", Qs.stringify(data))
+        .then((res) => {
+          console.log(res);
+          this.foodmenu.splice(this.editoritem, 1);
+          this.editoritem = null;
         })
-        .catch(err => {
-            console.error(err); 
+        .catch((err) => {
+          console.error(err);
+          this.editoritem = null;
+        });
+    },
+    foodupdate() {
+      this.axios
+        .post("/api/foodupdate", Qs.stringify(this.newitem))
+        .then((res) => {
+          if (res.data.code == "1") {
+            console.log(res);
+            Object.assign(this.foodmenu[this.editoritem], res.data.data);
+          }
         })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    foodadd() {
+      this.axios
+        .post("/api/foodadd", Qs.stringify(this.newitem))
+        .then((res) => {
+          if (res.data.code == "1") {
+            console.log(res);
+            this.foodmenu.push(res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    foodget() {
+      this.axios
+        .get("/api/food")
+        .then((res) => {
+          this.foodmenu = res.data;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     additem() {
       this.editorstate = "ADD";
@@ -174,9 +200,9 @@ export default {
     ediorsumbit() {
       if (this.$refs.form.validate()) {
         if (this.editoritem != -1) {
-          Object.assign(this.foodmenu[this.editoritem], this.newitem);
+          this.foodupdate();
         } else {
-          this.foodmenu.push(this.newitem);
+          this.foodadd();
         }
         this.dialogedior = false;
         //发送更改请求
@@ -189,21 +215,21 @@ export default {
       this.dialogdelete = true;
     },
     delectsumbit() {
-      this.foodmenu.splice(this.editoritem, 1);
       this.dialogdelete = false;
+      this.fooddelete();
       //发生删除请求到后端
       //this.updata()
-      this.editoritem = null;
     },
-    ediorcancel() {
+    ediorcancel(type) {
       this.dialogdelete = false;
       this.dialogedior = false;
       this.editoritem = null;
+      if(type!="delete")
       this.$refs.form.reset();
     },
   },
   mounted() {
-      this.updated();
+    this.foodget();
   },
 };
 </script>
