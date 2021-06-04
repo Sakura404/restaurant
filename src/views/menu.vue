@@ -76,8 +76,8 @@
         <v-btn icon @click="delect(item)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
-      </template> </v-data-table
-    >{{ editoritem }}{{ foodmenu }}
+      </template>
+    </v-data-table>
   </v-container>
 </template>
 <script>
@@ -224,8 +224,7 @@ export default {
       this.dialogdelete = false;
       this.dialogedior = false;
       this.editoritem = null;
-      if(type!="delete")
-      this.$refs.form.reset();
+      if (type != "delete") this.$refs.form.reset();
     },
   },
   mounted() {
