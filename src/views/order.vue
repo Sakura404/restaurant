@@ -1,5 +1,34 @@
 <template>
   <v-container>
+    <v-dialog max-width="400px" v-model="submitdialog">
+      <v-card>
+        <v-card-title>Submit</v-card-title>
+        <v-card-text>
+          <h2>bill</h2>
+          <v-row max-width="400px">
+            <v-col>name</v-col>
+            <v-col>quantity</v-col>
+          </v-row>
+          <v-row max-width="400px" v-for="(bill_item, i) in bill" :key="i">
+            <v-col>{{ bill_item.name }}</v-col>
+            <v-col>{{ bill_item.quantity }}</v-col>
+          </v-row>
+          <v-row max-width="400px">
+            <v-col>
+              <h3>
+                total cost:<v-chip outlined small>{{ total }}￥</v-chip>
+              </h3>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer>
+            <v-btn color="primary" class="mx-1" @click="cancel()">cancel </v-btn> 
+            <v-btn color="primary" class="mx-1" @click="billsubmit()">submit</v-btn>
+          </v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-data-table
       hide-default-footer
       dense
@@ -8,12 +37,12 @@
     >
       <template v-slot:[`item.quantity`]="{ item }">
         <v-btn @click="quantityreduce(item)" icon>
-          <v-icon>mdi-minus</v-icon></v-btn
-        >
+          <v-icon>mdi-minus</v-icon>
+        </v-btn>
         {{ item.quantity }}
         <v-btn @click="quantityadd(item)" icon>
-          <v-icon>mdi-plus</v-icon></v-btn
-        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
       </template>
       <template v-slot:[`item.total`]="{ item }">
         {{ item.quantity * item.cost }}
@@ -29,13 +58,21 @@
         <v-row flat>
           <v-col></v-col>
           <v-spacer></v-spacer>
-          <v-col ><h3>total cost:{{ total }}￥</h3></v-col>
+          <v-col>
+            <h3>
+              total cost:<v-chip outlined small>{{ total }}￥</v-chip>
+            </h3>
+          </v-col>
         </v-row>
-        <v-row
-          ><v-col></v-col> <v-spacer></v-spacer
-          ><v-col cols="6"><v-btn text color="primary" width="70%">submit</v-btn></v-col
-          ><v-spacer></v-spacer><v-col></v-col
-        ></v-row>
+        <v-row>
+          <v-col></v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="6">
+            <v-btn @click="submit" outlined width="70%">submit</v-btn>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col></v-col>
+        </v-row>
       </template>
     </v-data-table>
   </v-container>
@@ -70,6 +107,7 @@ export default {
         },
       ],
       foodmenu: [],
+      submitdialog: false,
     };
   },
   computed: {
@@ -80,8 +118,28 @@ export default {
       }
       return t;
     },
+    bill() {
+      var billarr = new Array();
+      for (var a of this.foodmenu) {
+        if (a.quantity != 0) billarr.push(a);
+      }
+      if (billarr.length == 0)
+        billarr.push({ name: "nothing", quantity: "please pick out " });
+      return billarr;
+    },
   },
   methods: {
+    submit() {
+      this.submitdialog = true;
+    },
+    cancel() {
+      this.submitdialog = false;
+    },
+    billsubmit() {
+      this.submitdialog = false;
+      let data = this.bill;
+      console.log(data);
+    },
     foodget() {
       this.axios
         .get("/api/food")
