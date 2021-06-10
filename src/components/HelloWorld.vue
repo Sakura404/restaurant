@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer" app>
-      <v-subheader> {{ username }}</v-subheader>
+      <v-subheader > {{ username }}</v-subheader>
       <v-divider></v-divider>
       <v-list nav>
         <v-subheader>MAIN</v-subheader>
@@ -34,6 +34,7 @@
 
     <v-app-bar flat dense app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-breadcrumbs :items="breadcrumbs" large></v-breadcrumbs>
       <v-spacer></v-spacer>
       <v-scroll-x-reverse-transition>
         <v-text-field v-if="search" hide-details single-line></v-text-field>
@@ -57,7 +58,11 @@ export default {
     navlist: [
       { tolink: "/dashboard", ico: "mdi-home", itemname: "dashboard" },
       { tolink: "/menu", ico: "mdi-food", itemname: "menu" },
-      { tolink: "/order",ico: "mdi-clipboard-list-outline",itemname: "order"},
+      {
+        tolink: "/order",
+        ico: "mdi-clipboard-list-outline",
+        itemname: "order",
+      },
       { tolink: "/report", ico: "mdi-chart-bar", itemname: "report" },
     ],
     savereport: [
@@ -66,7 +71,17 @@ export default {
       { tolink: "/year", ico: "mdi-file", itemname: "year" },
     ],
   }),
-
-  computed: {},
+  computed: {
+    breadcrumbs() {
+      var a = new Array();
+      a.push({ text: "MAIN", disabled: true });
+      a.push({
+        text: this.$route.path.replace("/", ""),
+        disabled: false,
+        href: this.$route.path,
+      });
+      return a;
+    },
+  },
 };
 </script>

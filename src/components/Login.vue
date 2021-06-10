@@ -2,15 +2,15 @@
   <v-app>
     <v-container app
       ><v-row justify="center"
-        ><v-col class="x" cols="12" sm="4"
-          ><v-card outlined app
-            ><v-img
-              height="250"
-              src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-            ></v-img>
-            <v-card-title>管理员登录</v-card-title>
-            <v-card-text>
-              <v-form ref="login">
+        ><v-col class="x" cols="12" sm="4">
+          <v-form ref="login">
+            <v-card outlined app
+              ><v-img
+                height="250"
+                src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+              ></v-img>
+              <v-card-title>管理员登录</v-card-title>
+              <v-card-text>
                 <v-text-field
                   v-model="user"
                   prepend-icon="mdi-account"
@@ -26,18 +26,19 @@
                   placeholder="输入你的密码"
                   label="密码"
                   :rules="pswrules"
-                ></v-text-field> </v-form
-              ><v-divider></v-divider>
-              <v-card-actions>
-                <v-spacer
-                  ><v-btn @click="submit()" text color="primary" width="70%"
-                    >登录</v-btn
-                  ></v-spacer
-                >
-              </v-card-actions>
-              {{ loginmeg }}
-            </v-card-text>
-          </v-card>
+                ></v-text-field>
+                <v-divider></v-divider>
+                <v-card-actions>
+                  <v-spacer
+                    ><v-btn @click="submit()" text color="primary" width="70%"
+                      >登录</v-btn
+                    ></v-spacer
+                  >
+                </v-card-actions>
+                {{ loginmeg }}
+              </v-card-text>
+            </v-card>
+          </v-form>
         </v-col>
       </v-row>
     </v-container>
@@ -94,6 +95,7 @@ export default {
         })
         .catch((err) => {
           console.error(err);
+          this.loginmeg = "服务器未响应";
         });
     },
   },

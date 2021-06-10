@@ -2,9 +2,8 @@
   <v-container>
     <v-dialog max-width="400px" v-model="submitdialog">
       <v-card>
-        <v-card-title>Submit</v-card-title>
+        <v-card-title>bill</v-card-title>
         <v-card-text>
-          <h2>bill</h2>
           <v-row max-width="400px">
             <v-col>name</v-col>
             <v-col>quantity</v-col>
@@ -23,8 +22,12 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer>
-            <v-btn color="primary" class="mx-1" @click="cancel()">cancel </v-btn> 
-            <v-btn color="primary" class="mx-1" @click="billsubmit()">submit</v-btn>
+            <v-btn color="primary" class="mx-1" @click="cancel()"
+              >cancel
+            </v-btn>
+            <v-btn color="primary" class="mx-1" @click="billsubmit()"
+              >submit</v-btn
+            >
           </v-spacer>
         </v-card-actions>
       </v-card>
@@ -32,6 +35,8 @@
     <v-data-table
       hide-default-footer
       dense
+      :loading="loading"
+      :loading-text="loadingmeg"
       :headers="headers"
       :items="foodmenu"
     >
@@ -68,7 +73,9 @@
           <v-col></v-col>
           <v-spacer></v-spacer>
           <v-col cols="6">
-            <v-btn @click="submit" outlined width="70%">submit</v-btn>
+            <v-btn @click="submit" :disabled="billdisable" outlined width="70%"
+              >submit</v-btn
+            >
           </v-col>
           <v-spacer></v-spacer>
           <v-col></v-col>
@@ -108,6 +115,8 @@ export default {
       ],
       foodmenu: [],
       submitdialog: false,
+      loading: true,
+      loadingmeg: "正在获取数据中请稍等",
     };
   },
   computed: {
@@ -123,9 +132,11 @@ export default {
       for (var a of this.foodmenu) {
         if (a.quantity != 0) billarr.push(a);
       }
-      if (billarr.length == 0)
-        billarr.push({ name: "nothing", quantity: "please pick out " });
       return billarr;
+    },
+    billdisable() {
+      if (this.bill.length == 0) return true;
+      else return false;
     },
   },
   methods: {
@@ -139,17 +150,30 @@ export default {
       this.submitdialog = false;
       let data = this.bill;
       console.log(data);
+      this.axios
+        .post("/api/ordersubmit", data)
+        .then((res) => {
+          this.foodget();
+          alert("submit success");
+          console.log(res.data.meg);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     foodget() {
+      this.loading = true;
       this.axios
         .get("/api/food")
         .then((res) => {
+          this.loading = false;
           this.foodmenu = res.data;
           this.foodmenu.forEach((value) => {
             value["quantity"] = 0;
           });
         })
         .catch((err) => {
+          this.loading = false;
           console.error(err);
         });
     },

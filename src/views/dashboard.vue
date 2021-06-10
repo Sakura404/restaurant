@@ -10,43 +10,41 @@
             color="cyan"
           >
             <v-sparkline
+              show-labels
               auto-draw
               color="white"
               line-width="2"
               padding="16"
               smooth="10"
-              :labels="day()"
               :value="daysale"
             >
             </v-sparkline>
           </v-sheet>
-          <v-card-text>近30天每天的营业收入</v-card-text>
+          <v-card-text>近10天每天的营业收入</v-card-text>
         </v-card>
       </v-col>
-      <v-col lg="3" cols="6">
-        <v-card>
-          <v-card-title>今天营业收入</v-card-title>
-          <v-sheet
-            color="cyan"
-            class="d-flex align-center justify-center pa-4 mx-auto"
-            min-height="100px"
-          >
-            <div class="display-1">550</div></v-sheet
-          >
-        </v-card> </v-col
-      ><v-col lg="3" cols="6">
-        <v-card>
-          <v-card-title>今月营业收入</v-card-title>
-          <v-sheet
-            color="cyan"
-            class="d-flex align-center justify-center pa-4 mx-auto"
-            min-height="100px"
-          >
-            <div class="display-1">550</div></v-sheet
-          >
+    </v-row>
+    <v-row>
+      <v-col lg="6" cols="12">
+        <v-card :loading="loading">
+          <v-card-title>sales</v-card-title>
+          <v-card-text>
+            <v-row max-width="400px">
+              <v-col>id</v-col>
+              <v-col>name</v-col>
+              <v-col>sales</v-col>
+            </v-row>
+            <v-row max-width="400px" v-for="(item, i) in foodsale" :key="i">
+              <v-col>{{ item.id }}</v-col>
+              <v-col>{{ item.name }}</v-col>
+              <v-col>{{ item.sales }}</v-col>
+            </v-row>
+            <v-row max-width="400px">
+              <v-col></v-col>
+            </v-row>
+          </v-card-text>
         </v-card>
       </v-col>
-      {{ day() }}
     </v-row>
   </v-container>
 </template>
@@ -55,6 +53,8 @@ export default {
   data() {
     return {
       daysale: [10, 20, 12, 24, 17, 45, 73, 30, 41],
+      foodsale: [],
+      loading: true,
     };
   },
   methods: {
@@ -68,6 +68,22 @@ export default {
       }
       return x;
     },
+    getsale() {
+      this.loading = true;
+      this.axios
+        .get("api/salesget")
+        .then((res) => {
+          this.foodsale = res.data;
+          this.loading = false;
+          console.log(res);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+  },
+  mounted() {
+    this.getsale();
   },
 };
 </script>
