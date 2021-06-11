@@ -80,7 +80,7 @@
     </v-data-table>
   </v-container>
 </template>
-<script>
+<script >
 import Qs from "qs";
 export default {
   data() {
