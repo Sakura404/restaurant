@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-dialog color="danger" max-width="400px" v-model="dialogdelete">
-      <v-card>
+    <v-dialog color="red" max-width="400px" v-model="dialogdelete">
+      <v-card >
         <v-card-title>警告</v-card-title>
         <v-card-text>确定要删除该菜品么</v-card-text>
         <v-card-actions>
@@ -53,6 +53,8 @@
       </v-card>
     </v-dialog>
     <v-data-table
+      :loading="loading"
+      :loading-text="loadingmeg"
       :headers="headers"
       :items="foodmenu"
       :footer-props="{
@@ -102,6 +104,8 @@ export default {
       editoritem: null,
       dialogedior: null,
       dialogdelete: null,
+      loading: true,
+      loadingmeg: "正在获取数据中请稍等",
       headers: [
         {
           text: "id",
@@ -181,6 +185,7 @@ export default {
         .get("/api/food")
         .then((res) => {
           this.foodmenu = res.data;
+          this.loading = false;
         })
         .catch((err) => {
           console.error(err);
@@ -229,6 +234,7 @@ export default {
   },
   mounted() {
     this.foodget();
+
   },
 };
 </script>
