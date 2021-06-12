@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-dialog color="red" max-width="400px" v-model="dialogdelete">
-      <v-card >
+      <v-card>
         <v-card-title>警告</v-card-title>
         <v-card-text>确定要删除该菜品么</v-card-text>
         <v-card-actions>
@@ -145,8 +145,8 @@ export default {
       this.axios
         .post("/api/fooddelete", Qs.stringify(data))
         .then((res) => {
-          console.log(res);
-          this.foodmenu.splice(this.editoritem, 1);
+          alert(res.data.meg);
+          if (res.data.coding == "1") this.foodmenu.splice(this.editoritem, 1);
           this.editoritem = null;
         })
         .catch((err) => {
@@ -234,7 +234,6 @@ export default {
   },
   mounted() {
     this.foodget();
-
   },
 };
 </script>
